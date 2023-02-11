@@ -1,9 +1,13 @@
-package org.example.modell;
+package org.example.ManyToOne.model;
+
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "person")
+@Table(name = "Person")
 public class Person {
     @Id
     @Column(name = "id")
@@ -16,19 +20,17 @@ public class Person {
     @Column(name = "age")
     private int age;
 
-    public Person() {}
+    @OneToMany(mappedBy = "owner")
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    private List<Item> items;
+
+    public Person() {
+
+    }
 
     public Person(String name, int age) {
         this.name = name;
         this.age = age;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -47,6 +49,14 @@ public class Person {
         this.age = age;
     }
 
+    public List<Item> getItems() {
+        return items;
+    }
+
+    public void setItems(List<Item> items) {
+        this.items = items;
+    }
+
     @Override
     public String toString() {
         return "Person{" +
@@ -54,5 +64,14 @@ public class Person {
                 ", name='" + name + '\'' +
                 ", age=" + age +
                 '}';
+    }
+
+    public void addItem(Item item) {
+        if (items == null) {
+            items = new ArrayList<>();
+        }
+
+        items.add(item);
+        item.setOwner(this);
     }
 }
